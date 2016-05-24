@@ -1,6 +1,6 @@
 {
   "name": "rethinkdb-boundaries",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Downloads, converts, and indexes US Census TIGER data representing all boundaries in the United States to RethinkDB.",
   "main": "dist/index.js",
   "keywords": [
