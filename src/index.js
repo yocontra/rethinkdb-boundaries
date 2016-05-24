@@ -6,11 +6,14 @@ import path from 'path'
 import chalk from 'chalk'
 import toJSON from 'shp2json'
 import plural from 'plural'
+import defaultsDeep from 'lodash.defaultsdeep'
 import config from './defaultConfig'
 import getFTP from './getFTP'
 import getRethink from './getRethink'
 
-export default (options = config, cb) => {
+export default (overrides, cb) => {
+  const options = defaultsDeep(config, overrides)
+
   console.log(chalk.bold('Connecting to US Census Bureau...'))
   getConnections(options, (err, conns) => {
     if (err) return cb(err)
