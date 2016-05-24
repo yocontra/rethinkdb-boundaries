@@ -13,7 +13,6 @@
   "base": "/geo/tiger/TIGER2015/",
   "objects": [
     "STATE",
-    "ZCTA5",
     "PLACE"
   ]
 }
