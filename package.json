@@ -1,9 +1,17 @@
 {
   "name": "rethinkdb-boundaries",
-  "version": "1.0.0",
-  "description": "Description goes here",
+  "version": "1.0.1",
+  "description": "Downloads, converts, and indexes US Census TIGER data representing all boundaries in the United States to RethinkDB.",
   "main": "dist/index.js",
-  "keywords": [],
+  "keywords": [
+    "census",
+    "geojson",
+    "rethink",
+    "rethinkdb",
+    "index",
+    "civic",
+    "civil"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/contra/rethinkdb-boundaries.git"
@@ -17,6 +25,9 @@
   "files": [
     "dist"
   ],
+  "bin": {
+    "rethinkdb-boundaries": "./bin/import-wrapper.js"
+  },
   "scripts": {
     "preversion": "npm run clean && npm run build && npm docs",
     "postversion": "npm run changelog",
