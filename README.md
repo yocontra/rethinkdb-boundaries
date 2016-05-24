@@ -1,3 +1,7 @@
+<p align='center'>
+  <img src='https://i.imgur.com/JXSMT0k.png' width='400'/>
+</p>
+
 # rethinkdb-boundaries [![NPM version][npm-image]][npm-url] [![Downloads][downloads-image]][npm-url]
 
 Downloads, converts, and indexes US Census TIGER data representing all boundaries in the United States to RethinkDB.
@@ -9,7 +13,6 @@ Basically makes these types of queries easy:
 - What state and city is this location in?
 - Get all documents with a location inside New York City
 - Get all documents with a location not inside any city
-
 
 Still a work in progress, more functionality and power being added soon!
 
