@@ -21,7 +21,7 @@ export default (options = config, cb) => {
     async.auto({
       filePaths: (done) => {
         console.log(chalk.bold('Fetching available boundaries'))
-        async.concat(options.objects, fetchObjectFiles.bind(null, context), done)
+        async.concatSeries(options.objects, fetchObjectFiles.bind(null, context), done)
       },
       json: [ 'filePaths', ({ filePaths }, done) => {
         console.log(chalk.bold(`Downloading and converting ${filePaths.length} boundary ${plural('file', filePaths.length)}`))
@@ -29,7 +29,7 @@ export default (options = config, cb) => {
       } ],
       records: [ 'json', ({ json }, done) => {
         console.log(chalk.bold(`Writing ${json.length} ${plural('boundary', json.length)} to RethinkDB`))
-        async.map(json, writeGeoJSON.bind(null, context), done)
+        async.mapSeries(json, writeGeoJSON.bind(null, context), done)
       } ]
     }, cb)
   })
