@@ -8,11 +8,14 @@ Downloads, converts, and indexes US Census TIGER data representing all boundarie
 
 By default, this imports the boundaries of every state and incorporated place (~30K boundaries). Takes quite a bit of time depending on your internet speed.
 
-Basically makes these types of queries easy:
+Basically makes it easy to apply a city/state/whatever geo-lens on top of arbitrary data, making queries like these simple:
 
 - What state and city is this location in?
-- Get all documents with a location inside New York City
-- Get all documents with a location not inside any city
+- What states and cities does this line pass through?
+- Get all documents that have a line passing through New York, Boston, and Providence
+- Subscribe to all new documents created in Boston, MA
+- Get all documents created within New York City
+- Get all documents created outside of a city
 
 Still a work in progress, more functionality and power being added soon!
 
