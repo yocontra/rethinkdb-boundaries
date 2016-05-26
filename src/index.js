@@ -26,7 +26,7 @@ export default (overrides, cb) => {
       options
     }
 
-    async.concatSeries(options.objects, processObject.bind(null, context), cb)
+    async.forEach(options.objects, processObject.bind(null, context), cb)
   })
 }
 
