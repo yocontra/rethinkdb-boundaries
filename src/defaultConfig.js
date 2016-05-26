@@ -6,8 +6,7 @@ export default {
   rethink: {
     silent: true,
     host: 'localhost',
-    port: 29015,
-    ssl: false,
+    port: 28015,
     db: 'test',
     table: 'Boundary'
   },

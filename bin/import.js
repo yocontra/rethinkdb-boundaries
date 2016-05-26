@@ -8,10 +8,10 @@ const helpText = `
       $ rethinkdb-boundaries <input>
 
     Options
-      --host  Set the RethinkDB host name (default: 'localhost')
-      --port  Set the RethinkDB port (default: '29015')
-      --db  Set the database name (default: 'test')
-      --table  Set the table name (default: 'Boundary')
+      --host   Set the RethinkDB host name (default: localhost')
+      --port   Set the RethinkDB port (default: 28015)
+      --db     Set the database name (default: test)
+      --table  Set the table name (default: Boundary)
 
     Examples
       $ rethinkdb-boundaries --db my_app

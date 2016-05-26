@@ -8,9 +8,9 @@ exports.default = {
   },
   rethink: {
     silent: true,
+    pool: false,
     host: 'localhost',
     port: 29015,
-    ssl: false,
     db: 'test',
     table: 'Boundary'
   },

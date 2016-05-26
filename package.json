@@ -1,6 +1,6 @@
 {
   "name": "rethinkdb-boundaries",
-  "version": "1.0.9",
+  "version": "1.0.8",
   "description": "Downloads, converts, and indexes US Census TIGER data representing all boundaries in the United States to RethinkDB.",
   "main": "dist/index.js",
   "keywords": [
@@ -93,7 +93,7 @@
     "lodash.defaultsdeep": "^4.4.0",
     "meow": "^3.7.0",
     "plural": "^0.2.0",
-    "rethinkdbdash": "^2.3.6",
-    "shp2json": "^1.2.1"
+    "shp2json": "^1.2.1",
+    "thinky": "^2.3.2"
   }
 }

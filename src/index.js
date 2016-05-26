@@ -10,33 +10,23 @@ import defaultsDeep from 'lodash.defaultsdeep'
 import config from './defaultConfig'
 import getFTP from './getFTP'
 import getRethink from './getRethink'
+import saveBoundary from './saveBoundary'
 
 export default (overrides, cb) => {
   const options = defaultsDeep({}, overrides, config)
 
   console.log(chalk.bold('Establishing connections:'))
-  console.log(`  -- ${chalk.cyan('US Census Bureau')}`)
+  console.log(`  -- ${chalk.cyan(`US Census Bureau @ ${options.ftp.host}`)}`)
   console.log(`  -- ${chalk.cyan(`RethinkDB @ ${options.rethink.db}`)}`)
+
   getConnections(options, (err, conns) => {
     if (err) return cb(err)
     const context = {
       ...conns,
       options
     }
-    async.auto({
-      filePaths: (done) => {
-        console.log(chalk.bold('Fetching available boundaries'))
-        async.concatSeries(options.objects, fetchObjectFiles.bind(null, context), done)
-      },
-      json: [ 'filePaths', ({ filePaths }, done) => {
-        console.log(chalk.bold(`Downloading and converting ${filePaths.length} boundary ${plural('file', filePaths.length)}`))
-        async.concatSeries(filePaths, fetchObjectData.bind(null, context), done)
-      } ],
-      records: [ 'json', ({ json }, done) => {
-        console.log(chalk.bold(`Writing ${json.length} ${plural('boundary', json.length)} to RethinkDB`))
-        async.mapSeries(json, writeGeoJSON.bind(null, context), done)
-      } ]
-    }, cb)
+
+    async.concatSeries(options.objects, processObject.bind(null, context), cb)
   })
 }
 
@@ -47,76 +37,39 @@ function getConnections(options, cb) {
   }, cb)
 }
 
-function inferType(feature) {
-  if (feature.properties.STATENS) return 'state'
-  if (feature.properties.GEOID10) return 'zip'
-  if (feature.properties.PLACENS) return 'place'
-  console.log(feature.properties.NAME, feature.properties)
-  throw new Error('Unknown feature type?')
+function processObject(context, object, cb) {
+  fetchObjectFiles(context, object, (err, filePaths) => {
+    if (err) return cb(err)
+    console.log(chalk.bold(`Processing ${filePaths.length} boundary ${plural('file', filePaths.length)} for ${object}`))
+    async.forEach(filePaths, processFilePath.bind(null, context), cb)
+  })
 }
 
-function getPolygons(geometry) {
-  if (geometry.type === 'MultiPolygon') {
-    return geometry.coordinates.map((coords) => ({
-      type: 'Polygon',
-      coordinates: coords,
-      properties: geometry.properties
-    }))
-  }
+function processFilePath(context, file, cb) {
+  const { ftp } = context
+  ftp.get(file.path, (err, stream) => {
+    if (err) return cb(err)
 
-  return [ geometry ]
-}
+    const srcStream = toJSON(stream)
+    const chunks = []
 
-function writeGeoJSON({ rethink, options }, json, cb) {
-  const polygons = getPolygons(json.geometry)
-  const data = {
-    id: json.properties.GEOID,
-    type: inferType(json),
-    name: json.properties.GEOID10 || json.properties.NAME,
-    geo: polygons.map((p) => rethink.geojson(p))
-  }
+    srcStream.on('data', (data) => {
+      chunks.push(data)
+    })
 
-  async.auto({
-    db: (done) => {
-      const finish = () =>
-        done(null, rethink.db(options.rethink.db))
+    srcStream.once('error', (err) => cb(err))
+    srcStream.once('end', () => {
+      const docs = JSON.parse(Buffer.concat(chunks)).features
+      console.log(`  -- ${chalk.cyan(`Parsed ${file.path}, inserting ${docs.length} boundaries now...`)}`)
+      async.forEach(docs, saveBoundary.bind(null, context), cb)
+    })
 
-      rethink.dbCreate(options.rethink.db)
-        .run()
-        .then(finish)
-        .catch(finish)
-    },
-    table: [ 'db', ({ db }, done) => {
-      const finish = () =>
-        done(null, rethink.table(options.rethink.table))
-
-      db
-        .tableCreate(options.rethink.table)
-        .run()
-        .then(finish)
-        .catch(finish)
-    } ],
-    indexes: [ 'table', ({ table }, done) => {
-      const finish = () => done()
-      table
-        .indexCreate('geo', { geo: true, multi: true })
-        .run()
-        .then(finish)
-        .catch(finish)
-    } ],
-    doc: [ 'indexes', 'table', ({ indexes, table }, done) => {
-      table
-        .insert(data, { conflict: 'replace' })
-        .run()
-        .catch((err) => done(err))
-        .then(() => done())
-    } ]
-  }, cb)
+    stream.resume()
+  })
 }
 
 function fetchObjectFiles({ ftp, options }, object, done) {
   const folderName = path.join(options.base, object)
-  console.log(`  -- ${chalk.cyan(object)}`)
   ftp.list(folderName, (err, list) => {
     if (err) return done(err)
     const newList = list
@@ -126,26 +79,5 @@ function fetchObjectFiles({ ftp, options }, object, done) {
         path: path.join(folderName, i.name)
       }))
     done(null, newList)
-  })
-}
-
-function fetchObjectData({ ftp, options }, file, done) {
-  console.log(`  -- ${chalk.cyan(file.path)}`)
-  ftp.get(file.path, (err, stream) => {
-    if (err) return done(err)
-
-    const srcStream = toJSON(stream)
-    const chunks = []
-
-    srcStream.on('data', (data) => {
-      chunks.push(data)
-    })
-
-    srcStream.once('error', (err) => done(err))
-    srcStream.once('end', () =>
-      done(null, JSON.parse(Buffer.concat(chunks)).features)
-    )
-
-    stream.resume()
   })
 }

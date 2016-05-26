@@ -33,21 +33,26 @@ Usage
   $ rethinkdb-boundaries
 
 Options
-  --host  Set the RethinkDB host name (default: 'localhost')
-  --port  Set the RethinkDB port (default: '29015')
-  --db  Set the database name (default: 'test')
+  --host   Set the RethinkDB host name (default: 'localhost')
+  --port   Set the RethinkDB port (default: '29015')
+  --db     Set the database name (default: 'test')
   --table  Set the table name (default: 'Boundary')
 
 Examples
   $ rethinkdb-boundaries --db my_app
 
 $ rethinkdb-boundaries --db my_app
-Connecting to US Census Bureau...
-Fetching available boundaries
-  -- STATE
-  -- PLACE
-Downloading and converting 57 boundary files
-  -- /geo/tiger/TIGER2015/STATE/tl_2015_us_state.zip
+Establishing connections:
+  -- US Census Bureau @ ftp2.census.gov
+  -- RethinkDB @ my_app
+Processing 1 boundary file for STATE
+  -- Parsed /geo/tiger/TIGER2015/STATE/tl_2015_us_state.zip, inserting 56 boundaries now...
+Processing 56 boundary files for PLACE
+  -- Parsed /geo/tiger/TIGER2015/PLACE/tl_2015_01_place.zip, inserting 585 boundaries now...
+  -- Parsed /geo/tiger/TIGER2015/PLACE/tl_2015_02_place.zip, inserting 355 boundaries now...
+  -- Parsed /geo/tiger/TIGER2015/PLACE/tl_2015_04_place.zip, inserting 451 boundaries now...
+
+( and so on... )
 ```
 
 #### TODO:
