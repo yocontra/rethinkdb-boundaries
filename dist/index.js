@@ -49,7 +49,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 /*eslint no-console: 0 */
 
 exports.default = function (overrides, cb) {
-  var options = (0, _lodash2.default)(_defaultConfig2.default, overrides);
+  var options = (0, _lodash2.default)({}, overrides, _defaultConfig2.default);
 
   console.log(_chalk2.default.bold('Establishing connections:'));
   console.log('  -- ' + _chalk2.default.cyan('US Census Bureau'));

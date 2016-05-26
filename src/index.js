@@ -12,7 +12,7 @@ import getFTP from './getFTP'
 import getRethink from './getRethink'
 
 export default (overrides, cb) => {
-  const options = defaultsDeep(config, overrides)
+  const options = defaultsDeep({}, overrides, config)
 
   console.log(chalk.bold('Establishing connections:'))
   console.log(`  -- ${chalk.cyan('US Census Bureau')}`)
