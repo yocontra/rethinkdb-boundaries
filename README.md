@@ -22,6 +22,7 @@ Still a work in progress, more functionality and power being added soon!
   - Example: Replace `r.table('geo').filter({type: 'place', name: 'New York City'})` with `geo.place('New York City')` in queries
 - Options to import zip codes and more data
 - Store more city meta-information from census data
+- Sample queries for docs!
 
 ## Install
 

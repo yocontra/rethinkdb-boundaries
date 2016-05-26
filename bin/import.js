@@ -20,10 +20,6 @@ const helpText = `
 const cli = meow({
   inferType: true,
   help: helpText
-}, {
-  alias: {
-    r: 'rainbow'
-  }
 })
 
 const flags = {
