@@ -19,14 +19,6 @@ Basically makes it easy to apply a city/state/whatever geo-lens on top of arbitr
 
 Still a work in progress, more functionality and power being added soon!
 
-#### TODO:
-
-- Query sugar
-  - Example: Replace `r.table('geo').filter({type: 'place', name: 'New York City'})` with `geo.place('New York City')` in queries
-- Options to import zip codes and more data
-- Store more city meta-information from census data
-- Sample queries for docs!
-
 ## Install
 
 ```
@@ -57,6 +49,16 @@ Fetching available boundaries
 Downloading and converting 57 boundary files
   -- /geo/tiger/TIGER2015/STATE/tl_2015_us_state.zip
 ```
+
+#### TODO:
+
+Want to help out? Here's what I'm thinking about adding:
+
+- Query sugar
+  - Example: Replace `r.table('geo').filter({type: 'place', name: 'New York City'})` with `geo.place('New York City')` in queries
+- Options to import zip codes and more data
+- Store more city meta-information from census data
+- Sample queries for docs!
 
 [downloads-image]: http://img.shields.io/npm/dm/rethinkdb-boundaries.svg
 [npm-url]: https://npmjs.org/package/rethinkdb-boundaries
