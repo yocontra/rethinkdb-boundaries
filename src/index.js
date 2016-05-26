@@ -14,7 +14,9 @@ import getRethink from './getRethink'
 export default (overrides, cb) => {
   const options = defaultsDeep(config, overrides)
 
-  console.log(chalk.bold('Connecting to US Census Bureau...'))
+  console.log(chalk.bold('Establishing connections:'))
+  console.log(`  -- ${chalk.cyan('US Census Bureau')}`)
+  console.log(`  -- ${chalk.cyan(`RethinkDB @ ${options.rethink.db}`)}`)
   getConnections(options, (err, conns) => {
     if (err) return cb(err)
     const context = {
