@@ -51,7 +51,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 exports.default = function (overrides, cb) {
   var options = (0, _lodash2.default)(_defaultConfig2.default, overrides);
 
-  console.log(_chalk2.default.bold('Connecting to US Census Bureau...'));
+  console.log(_chalk2.default.bold('Establishing connections:'));
+  console.log('  -- ' + _chalk2.default.cyan('US Census Bureau'));
+  console.log('  -- ' + _chalk2.default.cyan('RethinkDB @ ' + options.rethink.db));
   getConnections(options, function (err, conns) {
     if (err) return cb(err);
     var context = (0, _extends3.default)({}, conns, {
