@@ -1,4 +1,7 @@
+import once from 'once'
+
 function saveBoundary({ rethink, options }, json, cb) {
+  cb = once(cb)
   const polygons = getPolygons(json.geometry)
   const data = {
     id: json.properties.GEOID,

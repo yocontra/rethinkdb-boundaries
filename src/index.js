@@ -7,12 +7,14 @@ import chalk from 'chalk'
 import toJSON from 'shp2json'
 import plural from 'plural'
 import defaultsDeep from 'lodash.defaultsdeep'
+import once from 'once'
 import config from './defaultConfig'
 import getFTP from './getFTP'
 import getRethink from './getRethink'
 import saveBoundary from './saveBoundary'
 
 export default (overrides, cb) => {
+  cb = once(cb)
   const options = defaultsDeep({}, overrides, config)
 
   console.log(chalk.bold('Establishing connections:'))
@@ -31,6 +33,7 @@ export default (overrides, cb) => {
 }
 
 function getConnections(options, cb) {
+  cb = once(cb)
   async.parallel({
     ftp: getFTP.bind(null, options.ftp),
     rethink: getRethink.bind(null, options.rethink)
@@ -38,14 +41,16 @@ function getConnections(options, cb) {
 }
 
 function processObject(context, object, cb) {
+  cb = once(cb)
   fetchObjectFiles(context, object, (err, filePaths) => {
     if (err) return cb(err)
     console.log(chalk.bold(`Processing ${filePaths.length} boundary ${plural('file', filePaths.length)} for ${object}`))
-    async.forEach(filePaths, processFilePath.bind(null, context), cb)
+    async.forEachSeries(filePaths, processFilePath.bind(null, context), cb)
   })
 }
 
 function processFilePath(context, file, cb) {
+  cb = once(cb)
   const { ftp } = context
   ftp.get(file.path, (err, stream) => {
     if (err) return cb(err)
@@ -68,16 +73,17 @@ function processFilePath(context, file, cb) {
   })
 }
 
-function fetchObjectFiles({ ftp, options }, object, done) {
+function fetchObjectFiles({ ftp, options }, object, cb) {
+  cb = once(cb)
   const folderName = path.join(options.base, object)
   ftp.list(folderName, (err, list) => {
-    if (err) return done(err)
+    if (err) return cb(err)
     const newList = list
       .filter((i) => i.type === '-')
       .map((i) => ({
         type: object,
         path: path.join(folderName, i.name)
       }))
-    done(null, newList)
+    cb(null, newList)
   })
 }

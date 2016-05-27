@@ -1,6 +1,8 @@
 import thinky from 'thinky'
+import once from 'once'
 
 export default (opt, cb) => {
+  cb = once(cb)
   const db = thinky(opt)
   db.Boundary = db.createModel(opt.table, {
     // core fields

@@ -92,6 +92,7 @@
     "ftp": "^0.3.10",
     "lodash.defaultsdeep": "^4.4.0",
     "meow": "^3.7.0",
+    "once": "^1.3.3",
     "plural": "^0.2.0",
     "shp2json": "^1.2.1",
     "thinky": "^2.3.2"

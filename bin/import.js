@@ -5,7 +5,7 @@ import loader from '../src'
 
 const helpText = `
     Usage
-      $ rethinkdb-boundaries <input>
+      $ rethinkdb-boundaries
 
     Options
       --host   Set the RethinkDB host name (default: localhost')
