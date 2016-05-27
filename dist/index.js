@@ -32,6 +32,10 @@ var _lodash = require('lodash.defaultsdeep');
 
 var _lodash2 = _interopRequireDefault(_lodash);
 
+var _once = require('once');
+
+var _once2 = _interopRequireDefault(_once);
+
 var _defaultConfig = require('./defaultConfig');
 
 var _defaultConfig2 = _interopRequireDefault(_defaultConfig);
@@ -50,7 +54,10 @@ var _saveBoundary2 = _interopRequireDefault(_saveBoundary);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+/*eslint no-console: 0 */
+
 exports.default = function (overrides, cb) {
+  cb = (0, _once2.default)(cb);
   var options = (0, _lodash2.default)({}, overrides, _defaultConfig2.default);
 
   console.log(_chalk2.default.bold('Establishing connections:'));
@@ -63,11 +70,12 @@ exports.default = function (overrides, cb) {
       options: options
     });
 
-    _async2.default.concatSeries(options.objects, processObject.bind(null, context), cb);
+    _async2.default.forEachSeries(options.objects, processObject.bind(null, context), cb);
   });
-}; /*eslint no-console: 0 */
+};
 
 function getConnections(options, cb) {
+  cb = (0, _once2.default)(cb);
   _async2.default.parallel({
     ftp: _getFTP2.default.bind(null, options.ftp),
     rethink: _getRethink2.default.bind(null, options.rethink)
@@ -75,14 +83,16 @@ function getConnections(options, cb) {
 }
 
 function processObject(context, object, cb) {
+  cb = (0, _once2.default)(cb);
   fetchObjectFiles(context, object, function (err, filePaths) {
     if (err) return cb(err);
     console.log(_chalk2.default.bold('Processing ' + filePaths.length + ' boundary ' + (0, _plural2.default)('file', filePaths.length) + ' for ' + object));
-    _async2.default.forEach(filePaths, processFilePath.bind(null, context), cb);
+    _async2.default.forEachSeries(filePaths, processFilePath.bind(null, context), cb);
   });
 }
 
 function processFilePath(context, file, cb) {
+  cb = (0, _once2.default)(cb);
   var ftp = context.ftp;
 
   ftp.get(file.path, function (err, stream) {
@@ -99,23 +109,23 @@ function processFilePath(context, file, cb) {
       return cb(err);
     });
     srcStream.once('end', function () {
-      console.log('  -- Parsed ' + file.path + ' succesfully, inserting now...');
       var docs = JSON.parse(_buffer.Buffer.concat(chunks)).features;
-      console.log('    -- ' + docs.length + ' total boundaries being inserted');
-      _async2.default.forEachSeries(docs, _saveBoundary2.default.bind(null, context), cb);
+      console.log('  -- ' + _chalk2.default.cyan('Parsed ' + file.path + ', inserting ' + docs.length + ' boundaries now...'));
+      _async2.default.forEach(docs, _saveBoundary2.default.bind(null, context), cb);
     });
 
     stream.resume();
   });
 }
 
-function fetchObjectFiles(_ref, object, done) {
+function fetchObjectFiles(_ref, object, cb) {
   var ftp = _ref.ftp;
   var options = _ref.options;
 
+  cb = (0, _once2.default)(cb);
   var folderName = _path2.default.join(options.base, object);
   ftp.list(folderName, function (err, list) {
-    if (err) return done(err);
+    if (err) return cb(err);
     var newList = list.filter(function (i) {
       return i.type === '-';
     }).map(function (i) {
@@ -124,7 +134,7 @@ function fetchObjectFiles(_ref, object, done) {
         path: _path2.default.join(folderName, i.name)
       };
     });
-    done(null, newList);
+    cb(null, newList);
   });
 }
 module.exports = exports['default'];

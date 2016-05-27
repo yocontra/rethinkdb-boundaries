@@ -1,17 +1,25 @@
 'use strict';
 
 exports.__esModule = true;
+
+var _once = require('once');
+
+var _once2 = _interopRequireDefault(_once);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function saveBoundary(_ref, json, cb) {
   var rethink = _ref.rethink;
   var options = _ref.options;
 
+  cb = (0, _once2.default)(cb);
   var polygons = getPolygons(json.geometry);
   var data = {
     id: json.properties.GEOID,
     type: inferType(json),
     name: json.properties.GEOID10 || json.properties.NAME,
     geo: polygons.map(function (p) {
-      return rethink.geojson(p);
+      return rethink.r.geojson(p);
     })
   };
 

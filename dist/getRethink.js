@@ -6,13 +6,16 @@ var _thinky = require('thinky');
 
 var _thinky2 = _interopRequireDefault(_thinky);
 
+var _once = require('once');
+
+var _once2 = _interopRequireDefault(_once);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = function (opt, cb) {
+  cb = (0, _once2.default)(cb);
   var db = (0, _thinky2.default)(opt);
-  db.r.getPoolMaster()._flushErrors = function () {};
-
-  db.Boundary = db.createModel('Boundary', {
+  db.Boundary = db.createModel(opt.table, {
     // core fields
     id: db.type.string(),
 
@@ -27,7 +30,9 @@ exports.default = function (opt, cb) {
   });
   db.Boundary.ensureIndex('geo', { geo: true, multi: true });
 
-  cb(null, db);
+  db.dbReady().then(function () {
+    return cb(null, db);
+  }).error(cb);
 };
 
 module.exports = exports['default'];
