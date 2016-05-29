@@ -17,8 +17,6 @@ const makeConnection = (opt, cb) => {
   client.once('error', cb)
 
   client.connect(opt)
-
-
 }
 
 export default makeConnection
