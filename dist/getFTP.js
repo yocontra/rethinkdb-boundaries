@@ -16,9 +16,10 @@ var makeConnection = function makeConnection(opt, cb) {
   cb = (0, _once2.default)(cb);
   var client = new _ftp2.default();
   var retry = setTimeout(function () {
+    console.log('Trying FTP again...');
     client.end();
     makeConnection(opt, cb);
-  }, 5000);
+  }, 2000);
 
   client.once('ready', function () {
     client.removeListener('error', cb);

@@ -5,9 +5,10 @@ const makeConnection = (opt, cb) => {
   cb = once(cb)
   const client = new FTPClient()
   const retry = setTimeout(() => {
+    console.log('Trying FTP again...')
     client.end()
     makeConnection(opt, cb)
-  }, 5000)
+  }, 2000)
 
   client.once('ready', () => {
     client.removeListener('error', cb)
