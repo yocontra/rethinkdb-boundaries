@@ -66,7 +66,7 @@ function processFilePath(context, file, cb) {
     srcStream.once('end', () => {
       const docs = JSON.parse(Buffer.concat(chunks)).features
       console.log(`  -- ${chalk.cyan(`Parsed ${file.path}, inserting ${docs.length} boundaries now...`)}`)
-      async.forEach(docs, saveBoundary.bind(null, context), cb)
+      async.forEachSeries(docs, saveBoundary.bind(null, context), cb)
     })
 
     stream.resume()

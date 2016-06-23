@@ -111,7 +111,7 @@ function processFilePath(context, file, cb) {
     srcStream.once('end', function () {
       var docs = JSON.parse(_buffer.Buffer.concat(chunks)).features;
       console.log('  -- ' + _chalk2.default.cyan('Parsed ' + file.path + ', inserting ' + docs.length + ' boundaries now...'));
-      _async2.default.forEach(docs, _saveBoundary2.default.bind(null, context), cb);
+      _async2.default.forEachSeries(docs, _saveBoundary2.default.bind(null, context), cb);
     });
 
     stream.resume();
